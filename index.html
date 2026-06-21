@@ -1,1 +1,629 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Empresarial | Digital Chevalier Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E2A47;
+    --navy-deep:#081A2E;
+    --gold:#C9A646;
+    --gold-light:#E4CD8C;
+    --cyan:#2FB6C4;
+    --paper:#FAF8F4;
+    --ink:#1A1A1A;
+    --muted:#6B7280;
+    --line:#E5E1D8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif;}
+  body{min-height:100vh; display:flex; flex-direction:column;}
+  .wrap{max-width:760px; margin:0 auto; padding:0 24px; width:100%;}
+
+  /* HEADER */
+  header{background:linear-gradient(135deg,var(--navy-deep),var(--navy)); padding:36px 0 30px; position:relative; overflow:hidden;}
+  header::after{content:""; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border:1px solid rgba(201,166,70,0.25); border-radius:50%;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{width:34px; height:34px; border:1.5px solid var(--gold); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--gold); font-family:'Playfair Display',serif; font-weight:700; font-size:18px; flex-shrink:0;}
+  .brand-text h1{font-family:'Playfair Display',serif; font-weight:700; font-size:22px; color:#fff; letter-spacing:0.3px;}
+  .brand-text h1 em{color:var(--gold-light); font-style:italic; font-weight:500;}
+  .brand-text p{font-size:11px; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; margin-top:3px;}
+
+  /* PROGRESS */
+  .progress-rail{height:3px; background:rgba(255,255,255,0.12); margin-top:26px; border-radius:3px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--gold); width:0%; transition:width .4s ease;}
+  .progress-label{color:rgba(255,255,255,0.6); font-size:12px; margin-top:8px; letter-spacing:0.5px;}
+
+  main{flex:1; padding:48px 0 80px;}
+
+  /* SCREENS */
+  .screen{display:none;}
+  .screen.active{display:block; animation:fadeUp .35s ease;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* INTRO */
+  .intro h2{font-family:'Playfair Display',serif; font-size:32px; color:var(--navy); line-height:1.25; margin-bottom:14px;}
+  .intro p.lead{color:var(--muted); font-size:16px; line-height:1.6; margin-bottom:32px; max-width:520px;}
+  .field{margin-bottom:20px;}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--navy); margin-bottom:7px; letter-spacing:0.2px;}
+  .field input{width:100%; padding:14px 16px; border:1.5px solid var(--line); border-radius:6px; font-size:15px; font-family:'Inter',sans-serif; background:#fff; color:var(--ink); transition:border-color .2s;}
+  .field input:focus{outline:none; border-color:var(--cyan);}
+  .field input::placeholder{color:#B0AEA6;}
+  .hint{font-size:12px; color:var(--muted); margin-top:14px;}
+
+  /* QUESTIONS */
+  .cat-eyebrow{font-size:11px; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; font-weight:700; margin-bottom:10px;}
+  .cat-title{font-family:'Playfair Display',serif; font-size:26px; color:var(--navy); margin-bottom:28px;}
+  .question{border-bottom:1px solid var(--line); padding:22px 0;}
+  .question:first-of-type{border-top:1px solid var(--line);}
+  .q-text{font-size:16px; color:var(--ink); margin-bottom:14px; line-height:1.5;}
+  .q-options{display:flex; gap:12px;}
+  .opt{flex:1; padding:12px 0; text-align:center; border:1.5px solid var(--line); border-radius:6px; cursor:pointer; font-weight:600; font-size:14px; color:var(--muted); transition:all .15s; user-select:none;}
+  .opt:hover{border-color:var(--cyan);}
+  .opt.selected-yes{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .opt.selected-no{background:#F4E9D8; border-color:var(--gold); color:var(--navy);}
+
+  .nav-row{display:flex; justify-content:space-between; margin-top:32px; gap:14px;}
+
+  button{font-family:'Inter',sans-serif; font-weight:600; font-size:15px; border:none; border-radius:6px; cursor:pointer; padding:15px 28px; transition:transform .12s, box-shadow .12s;}
+  button:active{transform:scale(0.98);}
+  .btn-primary{background:var(--navy); color:#fff; flex:1;}
+  .btn-primary:hover{box-shadow:0 6px 18px rgba(14,42,71,0.25);}
+  .btn-primary:disabled{background:#C9CDD2; cursor:not-allowed; box-shadow:none;}
+  .btn-ghost{background:transparent; color:var(--muted); border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--navy); color:var(--navy);}
+
+  /* RESULTS */
+  .result-head{text-align:center; margin-bottom:40px;}
+  .result-eyebrow{font-size:12px; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; font-weight:700;}
+  .result-store{font-family:'Playfair Display',serif; font-size:34px; color:var(--navy); margin:10px 0 6px;}
+  .result-seg{color:var(--muted); font-size:15px;}
+
+  .score-card{position:relative; background:linear-gradient(160deg,var(--navy-deep),var(--navy) 60%, #0C2440); border-radius:16px; padding:40px 24px 28px; margin:30px 0 40px; overflow:hidden; box-shadow:0 18px 40px rgba(8,26,46,0.25); border:1px solid rgba(201,166,70,0.3);}
+  .score-card-glow{position:absolute; top:-80px; left:50%; transform:translateX(-50%); width:280px; height:280px; background:radial-gradient(circle, rgba(201,166,70,0.25), transparent 70%); pointer-events:none;}
+  .score-eyebrow{position:relative; text-align:center; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold-light); font-weight:700; margin-bottom:18px;}
+  .score-card-foot{position:relative; text-align:center; font-size:11px; color:rgba(255,255,255,0.45); letter-spacing:0.5px; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1);}
+  .score-ring-wrap{display:flex; justify-content:center; position:relative;}
+  .score-ring{position:relative; width:190px; height:190px;}
+  .score-ring svg{transform:rotate(-90deg); display:block;}
+  .score-ring .center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .score-ring .num{font-family:'Playfair Display',serif; font-size:42px; color:#fff; font-weight:700;}
+  .score-ring .lbl{font-size:10px; letter-spacing:1.5px; color:var(--cyan); text-transform:uppercase; margin-top:4px; font-weight:600;}
+
+  .cat-bars{margin-bottom:36px;}
+  .cat-bar-row{display:flex; align-items:center; gap:14px; padding:10px 0;}
+  .cat-bar-label{width:190px; font-size:13px; font-weight:600; color:var(--navy); flex-shrink:0;}
+  .cat-bar-track{flex:1; height:8px; background:var(--line); border-radius:4px; overflow:hidden;}
+  .cat-bar-fill{height:100%; border-radius:4px;}
+  .cat-bar-pct{width:42px; text-align:right; font-size:13px; color:var(--muted); flex-shrink:0;}
+
+  .section-label{font-size:11px; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; font-weight:700; margin:36px 0 16px;}
+
+  .priority-card{background:#fff; border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:6px; padding:18px 20px; margin-bottom:12px;}
+  .priority-card h4{font-size:15px; color:var(--navy); margin-bottom:5px;}
+  .priority-card p{font-size:13.5px; color:var(--muted); line-height:1.5;}
+
+  .plan-card{background:linear-gradient(135deg,var(--navy-deep),var(--navy)); border-radius:10px; padding:32px 28px; color:#fff; margin-top:10px;}
+  .plan-tag{display:inline-block; background:rgba(201,166,70,0.18); border:1px solid var(--gold); color:var(--gold-light); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; padding:5px 12px; border-radius:20px; margin-bottom:14px;}
+  .plan-name{font-family:'Playfair Display',serif; font-size:26px; margin-bottom:10px;}
+  .plan-desc{color:rgba(255,255,255,0.75); font-size:14.5px; line-height:1.6; margin-bottom:20px;}
+  .plan-includes{list-style:none; margin-bottom:24px;}
+  .plan-includes li{font-size:14px; color:rgba(255,255,255,0.9); padding:7px 0 7px 22px; position:relative; border-top:1px solid rgba(255,255,255,0.1);}
+  .plan-includes li:first-child{border-top:none;}
+  .plan-includes li::before{content:"✓"; position:absolute; left:0; color:var(--gold);}
+  .plan-price-row{display:flex; align-items:baseline; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.15); padding-top:18px;}
+  .plan-price{font-family:'Playfair Display',serif; font-size:30px; color:var(--gold-light);}
+  .plan-price span{font-size:13px; color:rgba(255,255,255,0.6); font-family:'Inter',sans-serif;}
+
+  .cta-row{margin-top:28px; display:flex; flex-direction:column; gap:10px;}
+  .cta-note{text-align:center; font-size:12px; color:var(--muted); margin-top:14px;}
+
+  footer{text-align:center; padding:24px 0; font-size:12px; color:var(--muted); border-top:1px solid var(--line);}
+
+  @media(max-width:600px){
+    .cat-bar-label{width:130px; font-size:12px;}
+    .intro h2{font-size:26px;}
+    .plan-card{padding:26px 20px;}
+  }
+
+  /* PRINT / PDF */
+  @media print{
+    header{background:#fff !important; padding:10px 0;}
+    header::after{display:none;}
+    .brand-text h1, .brand-text h1 em{color:var(--navy) !important;}
+    .brand-mark{color:var(--navy); border-color:var(--navy);}
+    .progress-rail, .progress-label{display:none;}
+    .screen{display:none !important;}
+    .screen.active{display:block !important;}
+    .cta-row, footer{display:none !important;}
+    body{background:#fff;}
+    .plan-card{background:#fff !important; border:1.5px solid var(--navy); color:var(--ink) !important;}
+    .plan-name, .plan-tag{color:var(--navy) !important;}
+    .plan-desc, .plan-includes li{color:var(--ink) !important;}
+    .plan-price{color:var(--navy) !important;}
+    .plan-price-row span{color:var(--muted) !important;}
+    .plan-tag{border-color:var(--navy);}
+    .score-ring svg{filter:none;}
+    .score-card{background:#fff !important; border:1.5px solid var(--navy); box-shadow:none;}
+    .score-card-glow{display:none;}
+    .score-eyebrow{color:var(--navy) !important;}
+    .score-card-foot{color:var(--muted) !important; border-top-color:var(--line) !important;}
+    .score-ring .num{color:var(--navy) !important;}
+    .score-ring .lbl{color:var(--navy) !important;}
+    @page{margin:14mm;}
+  }
+  .btn-secondary{background:#fff; color:var(--navy); border:1.5px solid var(--navy);}
+  .btn-secondary:hover{background:#F4F1EA;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="brand-mark">D</div>
+      <div class="brand-text">
+        <h1>Digital Chevalier <em>Card</em></h1>
+        <p>Diagnóstico Empresarial</p>
+      </div>
+    </div>
+    <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">Identificação</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <!-- SCREEN 0: INTRO -->
+    <section class="screen active" id="screen-intro">
+      <div class="intro">
+        <h2>Vamos descobrir onde sua loja está perdendo clientes.</h2>
+        <p class="lead">30 perguntas rápidas (sim ou não). No final, você recebe o diagnóstico com o nome da sua loja, os pontos mais urgentes e a proposta de solução com investimento.</p>
+
+        <div class="field">
+          <label for="storeName">Nome da loja</label>
+          <input type="text" id="storeName" placeholder="Ex.: Bazar da Bolinha">
+        </div>
+        <div class="field">
+          <label for="storeSegment">No que sua loja trabalha?</label>
+          <input type="text" id="storeSegment" placeholder="Ex.: roupas e variedades, beleza, alimentação...">
+        </div>
+        <div class="field">
+          <label for="storeCity">Cidade</label>
+          <input type="text" id="storeCity" placeholder="Ex.: Paulo Afonso, BA">
+        </div>
+
+        <button class="btn-primary" id="btnStart" style="width:100%;" disabled>Iniciar diagnóstico</button>
+        <p class="hint">Leva cerca de 4 minutos. Suas respostas geram um diagnóstico só para a sua loja — nada genérico.</p>
+      </div>
+    </section>
+
+    <!-- SCREEN 1: QUESTIONS (rendered dynamically) -->
+    <section class="screen" id="screen-quiz">
+      <div class="cat-eyebrow" id="catEyebrow">Categoria</div>
+      <div class="cat-title" id="catTitle">Título da categoria</div>
+      <div id="questionsContainer"></div>
+      <div class="nav-row">
+        <button class="btn-ghost" id="btnBack">Voltar</button>
+        <button class="btn-primary" id="btnNext" disabled>Continuar</button>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: RESULTS -->
+    <section class="screen" id="screen-results">
+      <div class="result-head">
+        <div class="result-eyebrow">Diagnóstico concluído</div>
+        <div class="result-store" id="resultStoreName">Nome da Loja</div>
+        <div class="result-seg" id="resultStoreMeta">Segmento · Cidade</div>
+      </div>
+
+      <div class="score-card">
+        <div class="score-card-glow"></div>
+        <div class="score-eyebrow">Índice de Maturidade Digital</div>
+        <div class="score-ring-wrap">
+          <div class="score-ring">
+            <svg width="190" height="190" viewBox="0 0 190 190">
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#E4CD8C"/>
+                  <stop offset="55%" stop-color="#C9A646"/>
+                  <stop offset="100%" stop-color="#2FB6C4"/>
+                </linearGradient>
+                <filter id="ringShadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#C9A646" flood-opacity="0.45"/>
+                </filter>
+              </defs>
+              <circle cx="95" cy="95" r="78" stroke="rgba(255,255,255,0.08)" stroke-width="2" fill="none"/>
+              <circle cx="95" cy="95" r="84" stroke="rgba(201,166,70,0.35)" stroke-width="1" fill="none" stroke-dasharray="2 6"/>
+              <circle cx="95" cy="95" r="70" stroke="rgba(255,255,255,0.08)" stroke-width="14" fill="none"/>
+              <circle id="ringProgress" cx="95" cy="95" r="70" stroke="url(#ringGradient)" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440" filter="url(#ringShadow)"/>
+            </svg>
+            <div class="center">
+              <div class="num" id="scoreNum">0%</div>
+              <div class="lbl">Maturidade digital</div>
+            </div>
+          </div>
+        </div>
+        <div class="score-card-foot">Digital Chevalier Card · Diagnóstico Empresarial</div>
+      </div>
+
+      <div class="section-label">Resultado por área</div>
+      <div class="cat-bars" id="catBars"></div>
+
+      <div class="section-label">Pontos mais urgentes</div>
+      <div id="priorityList"></div>
+
+      <div class="section-label">Solução recomendada</div>
+      <div class="plan-card" id="planCard"></div>
+
+      <div class="cta-row">
+        <button class="btn-primary" id="btnWhats" style="width:100%;">Falar com a Digital Chevalier Card no WhatsApp</button>
+        <button class="btn-secondary" id="btnPrint" style="width:100%;">Baixar / imprimir diagnóstico (PDF)</button>
+        <button class="btn-ghost" id="btnRestart" style="width:100%;">Refazer diagnóstico</button>
+      </div>
+      <p class="cta-note">Diagnóstico gerado automaticamente. A proposta final é ajustada após conversa com a equipe.</p>
+    </section>
+
+  </div>
+</main>
+
+<footer>Digital Chevalier Card · Paulo Afonso, Bahia</footer>
+
+<script>
+/* ===================== DATA ===================== */
+const CATEGORIES = [
+  {
+    key: "presenca",
+    title: "Presença Digital",
+    color: "#2FB6C4",
+    questions: [
+      "Sua empresa tem um site profissional?",
+      "Seu perfil aparece quando alguém busca seu produto ou serviço no Google?",
+      "Você tem perfil ativo no Instagram ou Facebook?",
+      "Seus clientes conseguem te encontrar facilmente no WhatsApp Business?",
+      "Você usa fotos e vídeos profissionais para divulgar produtos ou serviços?"
+    ],
+    weakMsg: "Sua loja está praticamente invisível para quem busca online — a maior parte dos clientes novos nem chega a te encontrar.",
+    strongMsg: "Presença digital é um ponto forte da sua loja."
+  },
+  {
+    key: "reputacao",
+    title: "Reputação e Avaliações",
+    color: "#C9A646",
+    questions: [
+      "Sua loja está cadastrada e completa no Google Meu Negócio?",
+      "Você responde às avaliações dos clientes no Google?",
+      "Sua nota média no Google é 4,5 estrelas ou mais?",
+      "Você costuma pedir avaliação a clientes satisfeitos?",
+      "Você acompanha o que falam da sua loja nas redes sociais?"
+    ],
+    weakMsg: "A reputação online da loja não está sendo cuidada — isso pesa diretamente na decisão de quem pesquisa antes de comprar.",
+    strongMsg: "Sua reputação online está bem cuidada."
+  },
+  {
+    key: "atendimento",
+    title: "Atendimento e Conversão",
+    color: "#0E2A47",
+    questions: [
+      "Você responde mensagens de clientes em até 1 hora?",
+      "Existe um roteiro padrão de atendimento na loja?",
+      "Você faz follow-up com clientes que não compraram na hora?",
+      "A loja oferece formas de pagamento variadas (Pix, cartão, parcelado)?",
+      "Existe um processo claro de pós-venda?"
+    ],
+    weakMsg: "Clientes interessados estão se perdendo no caminho entre o primeiro contato e a compra.",
+    strongMsg: "Seu atendimento converte bem o interesse em venda."
+  },
+  {
+    key: "marketing",
+    title: "Marketing e Divulgação",
+    color: "#2FB6C4",
+    questions: [
+      "Você investe em anúncios pagos (Instagram ou Google)?",
+      "Publica conteúdo nas redes com frequência (mínimo 3x por semana)?",
+      "Tem um calendário de promoções e datas comerciais?",
+      "Sabe quanto gasta e quanto retorna com marketing?",
+      "Usa o WhatsApp para campanhas e novidades?"
+    ],
+    weakMsg: "A loja depende só do movimento espontâneo — sem divulgação ativa, o crescimento tem um teto baixo.",
+    strongMsg: "Sua divulgação está ativa e consistente."
+  },
+  {
+    key: "identidade",
+    title: "Identidade Visual e Marca",
+    color: "#C9A646",
+    questions: [
+      "Sua loja tem um logotipo profissional?",
+      "Usa as mesmas cores e fontes em todos os materiais (fachada, redes, embalagens)?",
+      "Sua fachada ou vitrine comunica bem o que você vende?",
+      "Você tem cartão de visita, catálogo ou material de apresentação?",
+      "Os clientes reconhecem visualmente a sua marca?"
+    ],
+    weakMsg: "Sem identidade visual consistente, a loja perde força de reconhecimento e parece menos confiável.",
+    strongMsg: "Sua identidade visual transmite confiança."
+  },
+  {
+    key: "gestao",
+    title: "Gestão e Operação",
+    color: "#0E2A47",
+    questions: [
+      "Você acompanha o faturamento mensal de forma organizada?",
+      "Sabe qual é o seu ticket médio?",
+      "Tem controle de estoque?",
+      "Sabe quais produtos ou serviços dão mais lucro?",
+      "Existe alguém (ou processo) dedicado a marketing e vendas?"
+    ],
+    weakMsg: "Faltam números e controle para saber se o que está sendo feito realmente funciona.",
+    strongMsg: "Sua gestão dá uma base sólida para crescer."
+  }
+];
+
+const PLANS = [
+  {
+    tag: "Plano recomendado",
+    name: "Fundação Digital",
+    desc: "Para lojas que ainda não têm uma base online confiável. Estrutura essencial para começar a aparecer e ser encontrado.",
+    includes: [
+      "Google Meu Negócio otimizado e completo",
+      "Perfil de Instagram organizado e padronizado",
+      "WhatsApp Business configurado com catálogo",
+      "Identidade visual básica (cores, fontes, logo simples)"
+    ],
+    price: "R$ 690",
+    period: "investimento único"
+  },
+  {
+    tag: "Plano recomendado",
+    name: "Crescimento",
+    desc: "Para lojas que já têm uma base, mas precisam de presença ativa e constante para gerar mais clientes todo mês.",
+    includes: [
+      "Tudo do Fundação Digital",
+      "Conteúdo mensal para redes sociais",
+      "Tráfego pago segmentado para a região",
+      "Relatório mensal de resultados"
+    ],
+    price: "R$ 990",
+    period: "por mês"
+  },
+  {
+    tag: "Plano recomendado",
+    name: "Autoridade Regional",
+    desc: "Para lojas que já têm presença ativa e querem se tornar referência na cidade, com automação e site próprio.",
+    includes: [
+      "Tudo do Crescimento",
+      "Site ou landing page profissional",
+      "Automação de atendimento no WhatsApp",
+      "Estratégia de reputação e avaliações"
+    ],
+    price: "R$ 1.790",
+    period: "por mês"
+  }
+];
+
+/* ===================== STATE ===================== */
+let store = { name: "", segment: "", city: "" };
+let currentCat = 0;
+let answers = CATEGORIES.map(c => new Array(c.questions.length).fill(null)); // true/false/null
+
+/* ===================== ELEMENTS ===================== */
+const screens = {
+  intro: document.getElementById('screen-intro'),
+  quiz: document.getElementById('screen-quiz'),
+  results: document.getElementById('screen-results')
+};
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+
+function showScreen(name){
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+}
+
+/* ===================== INTRO ===================== */
+const storeNameInput = document.getElementById('storeName');
+const storeSegmentInput = document.getElementById('storeSegment');
+const storeCityInput = document.getElementById('storeCity');
+const btnStart = document.getElementById('btnStart');
+
+function validateIntro(){
+  btnStart.disabled = !(storeNameInput.value.trim() && storeSegmentInput.value.trim());
+}
+[storeNameInput, storeSegmentInput, storeCityInput].forEach(el => el.addEventListener('input', validateIntro));
+
+btnStart.addEventListener('click', () => {
+  store.name = storeNameInput.value.trim();
+  store.segment = storeSegmentInput.value.trim();
+  store.city = storeCityInput.value.trim();
+  currentCat = 0;
+  renderCategory();
+  showScreen('quiz');
+  updateProgress();
+});
+
+/* ===================== QUIZ ===================== */
+const catEyebrow = document.getElementById('catEyebrow');
+const catTitle = document.getElementById('catTitle');
+const questionsContainer = document.getElementById('questionsContainer');
+const btnBack = document.getElementById('btnBack');
+const btnNext = document.getElementById('btnNext');
+
+function renderCategory(){
+  const cat = CATEGORIES[currentCat];
+  catEyebrow.textContent = `Categoria ${currentCat + 1} de ${CATEGORIES.length}`;
+  catTitle.textContent = cat.title;
+  questionsContainer.innerHTML = "";
+
+  cat.questions.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `
+      <div class="q-text">${qi + 1 + currentCat*5}. ${q}</div>
+      <div class="q-options">
+        <div class="opt" data-val="yes">Sim</div>
+        <div class="opt" data-val="no">Não</div>
+      </div>
+    `;
+    const yesOpt = div.querySelector('[data-val="yes"]');
+    const noOpt = div.querySelector('[data-val="no"]');
+    const current = answers[currentCat][qi];
+    if(current === true) yesOpt.classList.add('selected-yes');
+    if(current === false) noOpt.classList.add('selected-no');
+
+    yesOpt.addEventListener('click', () => {
+      answers[currentCat][qi] = true;
+      yesOpt.classList.add('selected-yes'); noOpt.classList.remove('selected-no');
+      checkCategoryComplete();
+    });
+    noOpt.addEventListener('click', () => {
+      answers[currentCat][qi] = false;
+      noOpt.classList.add('selected-no'); yesOpt.classList.remove('selected-yes');
+      checkCategoryComplete();
+    });
+    questionsContainer.appendChild(div);
+  });
+
+  btnBack.style.visibility = currentCat === 0 ? 'hidden' : 'visible';
+  btnNext.textContent = currentCat === CATEGORIES.length - 1 ? 'Ver diagnóstico' : 'Continuar';
+  checkCategoryComplete();
+}
+
+function checkCategoryComplete(){
+  btnNext.disabled = answers[currentCat].some(a => a === null);
+}
+
+btnNext.addEventListener('click', () => {
+  if(currentCat < CATEGORIES.length - 1){
+    currentCat++;
+    renderCategory();
+    updateProgress();
+  } else {
+    showResults();
+  }
+});
+
+btnBack.addEventListener('click', () => {
+  if(currentCat > 0){
+    currentCat--;
+    renderCategory();
+    updateProgress();
+  }
+});
+
+function updateProgress(){
+  const totalSteps = CATEGORIES.length + 1; // +1 for intro
+  const step = currentCat + 1;
+  progressFill.style.width = `${(step / totalSteps) * 100}%`;
+  progressLabel.textContent = `${CATEGORIES[currentCat].title} · ${step} de ${CATEGORIES.length}`;
+}
+
+/* ===================== RESULTS ===================== */
+function showResults(){
+  document.getElementById('resultStoreName').textContent = store.name;
+  document.getElementById('resultStoreMeta').textContent = [store.segment, store.city].filter(Boolean).join(' · ');
+
+  const catScores = CATEGORIES.map((cat, i) => {
+    const yesCount = answers[i].filter(a => a === true).length;
+    return { ...cat, pct: Math.round((yesCount / cat.questions.length) * 100) };
+  });
+
+  const overallPct = Math.round(catScores.reduce((s,c) => s + c.pct, 0) / catScores.length);
+
+  // Ring
+  const circumference = 2 * Math.PI * 70;
+  const offset = circumference - (overallPct / 100) * circumference;
+  const ring = document.getElementById('ringProgress');
+  ring.setAttribute('stroke-dasharray', circumference);
+  ring.setAttribute('stroke-dashoffset', circumference);
+  document.getElementById('scoreNum').textContent = '0%';
+  showScreen('results');
+  setTimeout(() => {
+    ring.style.transition = 'stroke-dashoffset 1s ease';
+    ring.setAttribute('stroke-dashoffset', offset);
+    animateNumber(document.getElementById('scoreNum'), overallPct);
+  }, 100);
+
+  // Category bars
+  const catBars = document.getElementById('catBars');
+  catBars.innerHTML = "";
+  catScores.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = `
+      <div class="cat-bar-label">${c.title}</div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:0%; background:${c.color};"></div></div>
+      <div class="cat-bar-pct">${c.pct}%</div>
+    `;
+    catBars.appendChild(row);
+    requestAnimationFrame(() => {
+      setTimeout(() => { row.querySelector('.cat-bar-fill').style.transition = 'width .8s ease'; row.querySelector('.cat-bar-fill').style.width = c.pct + '%'; }, 50);
+    });
+  });
+
+  // Priority list — 3 weakest categories
+  const sorted = [...catScores].sort((a,b) => a.pct - b.pct);
+  const priorities = sorted.slice(0, 3);
+  const priorityList = document.getElementById('priorityList');
+  priorityList.innerHTML = "";
+  priorities.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'priority-card';
+    card.innerHTML = `<h4>${c.title} — ${c.pct}%</h4><p>${c.weakMsg}</p>`;
+    priorityList.appendChild(card);
+  });
+
+  // Plan recommendation based on overall score
+  let plan;
+  if(overallPct < 40) plan = PLANS[0];
+  else if(overallPct < 70) plan = PLANS[1];
+  else plan = PLANS[2];
+
+  const planCard = document.getElementById('planCard');
+  planCard.innerHTML = `
+    <div class="plan-tag">${plan.tag}</div>
+    <div class="plan-name">${plan.name}</div>
+    <div class="plan-desc">${plan.desc}</div>
+    <ul class="plan-includes">${plan.includes.map(i => `<li>${i}</li>`).join('')}</ul>
+    <div class="plan-price-row">
+      <div class="plan-price">${plan.price}</div>
+      <span>${plan.period}</span>
+    </div>
+  `;
+
+  // WhatsApp CTA
+  const msg = encodeURIComponent(`Olá! Acabei de fazer o diagnóstico empresarial da loja ${store.name} (${store.segment}) e quero saber mais sobre o plano ${plan.name}.`);
+  document.getElementById('btnWhats').onclick = () => {
+    window.open(`https://wa.me/5575991771095?text=${msg}`, '_blank');
+  };
+}
+
+function animateNumber(el, target){
+  let current = 0;
+  const step = Math.max(1, Math.round(target / 30));
+  const interval = setInterval(() => {
+    current += step;
+    if(current >= target){ current = target; clearInterval(interval); }
+    el.textContent = current + '%';
+  }, 25);
+}
+
+document.getElementById('btnPrint').addEventListener('click', () => {
+  window.print();
+});
+
+document.getElementById('btnRestart').addEventListener('click', () => {
+  currentCat = 0;
+  answers = CATEGORIES.map(c => new Array(c.questions.length).fill(null));
+  storeNameInput.value = ""; storeSegmentInput.value = ""; storeCityInput.value = "";
+  validateIntro();
+  showScreen('intro');
+  progressFill.style.width = "0%";
+  progressLabel.textContent = "Identificação";
+});
+</script>
+</body>
+</html>
