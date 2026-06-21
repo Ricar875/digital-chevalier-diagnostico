@@ -99,3 +99,4 @@ function renderDiagnostico(ranking) {
 }
 
 renderFormulario();
+<a href="https://wa.me/5575991771095?text=Quero%20saber%20mais%20sobre%20a%20proposta%20do%20meu%20diagn%C3%B3stico
